@@ -1,0 +1,7 @@
+npm init -y
+npm i -D typescript
+tsc --init
+npm i express mongoose zod jsonwebtoken cors dotenv
+npm i -D ts-node-dev @types/express @types/dotenv @types/jsonwebtoken
+
+"dev": "ts-node-dev --respawn --transpile-only ./src/server.ts"
