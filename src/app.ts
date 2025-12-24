@@ -1,8 +1,10 @@
 import express from "express";
-import type { NextFunction, Request, Response } from "express";
+import type { Request, Response } from "express";
 import cors from "cors";
 import { corsOptions } from "./app/config/corsOptions";
 import baseRouter from "./app/routes";
+import globalErrorHandler from "./app/middlewares/globalErrorHandler";
+import notFound from "./app/middlewares/notFound";
 
 const app = express();
 
@@ -26,13 +28,9 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 // global error
-app.use((error: any, res: Request, res: Response, next: NextFunction)=>{
+app.use(globalErrorHandler);
 
-  res.status(500).json({
-    success: false,
-    message: `Something has been wrong! ${err.message}`,
-    error
-  })
-})
+// Not found
+app.use(notFound);
 
 export default app;
