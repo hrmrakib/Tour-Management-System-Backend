@@ -1,30 +1,19 @@
 import { NextFunction, Request, Response } from "express";
-import { User } from "./user.model";
 import HSC from "http-status-codes";
 import { UserServices } from "./user.service";
+import catchAsync from "../../utils/catchAsync";
 
-type AsyncHandler = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => Promise<void>;
 
-const catchAsync =
-  (fn: AsyncHandler) => (req: Request, res: Response, next: NextFunction) => {
-    Promise.resolve(fn(req, res, next)).catch((err: any) => {
-      console.log(err);
-      next(err);
-    });
-  };
 
-const createUser = catchAsync(async (req: Request, res: Response) => {
+const createUser = catchAsync(async(req: Request, res: Response, next: NextFunction)=> {
   const user = await UserServices.createUser(req.body);
-  return res.status(HSC.CREATED).json({
+
+  res.status(HSC.CREATED).json({
     success: true,
     message: "User created successfully",
     data: user,
   });
-});
+})
 
 // const createUser = async (req: Request, res: Response) => {
 //   try {
