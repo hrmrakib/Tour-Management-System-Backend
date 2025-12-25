@@ -14,11 +14,11 @@ app.use(express.urlencoded({ extended: true }));
 // Apply CORS middleware from separate config
 app.use(cors(corsOptions));
 // Explicitly handle preflight for all routes
-app.options("*", cors(corsOptions));
+// app.options("*", cors(corsOptions));
 
 app.use("/api/v1", baseRouter);
 
-app.get("/", (req: Request, res: Response) => {
+app.get("/api/v1", (req: Request, res: Response) => {
   res.status(200).json({
     success: true,
     statusCode: 200,

@@ -2,18 +2,19 @@ import { NextFunction, Request, Response } from "express";
 import HSC from "http-status-codes";
 import { UserServices } from "./user.service";
 import catchAsync from "../../utils/catchAsync";
+import sendResponse from "../../utils/sendResponse";
 
+const createUser = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user = await UserServices.createUser(req.body);
 
-
-const createUser = catchAsync(async(req: Request, res: Response, next: NextFunction)=> {
-  const user = await UserServices.createUser(req.body);
-
-  res.status(HSC.CREATED).json({
-    success: true,
-    message: "User created successfully",
-    data: user,
-  });
-})
+    res.status(HSC.CREATED).json({
+      success: true,
+      message: "User created successfully",
+      data: user,
+    });
+  }
+);
 
 // const createUser = async (req: Request, res: Response) => {
 //   try {
@@ -30,16 +31,17 @@ const createUser = catchAsync(async(req: Request, res: Response, next: NextFunct
 // };
 
 const getAllUsers = async (req: Request, res: Response) => {
-  try {
-    const users = await UserServices.getAllUsers();
-    return res.status(HSC.OK).json({
-      success: true,
-      message: "Users retrieved successfully",
-      data: users,
-    });
-  } catch (error) {
-    return res.status(HSC.BAD_REQUEST).json({ success: false, error });
-  }
+  const result = await UserServices.getAllUsers();
+
+  sendResponse(res, {
+    success: true,
+    statusCode: HSC.OK,
+    message: "Users retrieved successfully",
+    meta: {
+      total: result.meta.total,
+    },
+    data: result.users,
+  });
 };
 
 export const userController = {
