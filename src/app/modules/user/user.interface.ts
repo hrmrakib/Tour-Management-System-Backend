@@ -32,7 +32,7 @@ export interface IUser {
   phone?: string;
   picture?: string;
   address?: string;
-  idDeleted?: boolean;
+  isDeleted?: boolean;
   isActive?: IsActive;
   isVarified?: boolean;
   role?: Role;

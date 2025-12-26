@@ -2,10 +2,12 @@ import { IUser } from "./user.interface";
 import { User } from "./user.model";
 
 const createUser = async (payload: Partial<IUser>) => {
-  const { name, email } = payload;
+  const {  email, ...rest } = payload;
+
+  const isUserExist = User.findOne({email});
   const user = await User.create({
-    name,
     email,
+    ...rest
   });
 
   return user;
