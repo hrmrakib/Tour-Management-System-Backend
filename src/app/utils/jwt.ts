@@ -1,16 +1,33 @@
 import { JwtPayload, Secret, SignOptions } from "jsonwebtoken";
 import jwt from "jsonwebtoken";
 
-const generateToken = (
+type Expiration = string | number | undefined;
+
+/**
+ * @param payload - The payload to be signed
+ * @param secret - The secret key
+ * @param expiresIn - The expiration time in seconds
+ * @returns The signed token
+ */
+
+const generateToken = async (
   payload: object,
   secret: Secret,
-  expiresIn?: SignOptions["expiresIn"]
+  expiresIn?: Expiration
 ) => {
-  const options: SignOptions = {
-    expiresIn,
-  };
-  const token = jwt.sign(payload, secret, options);
+  const options: SignOptions = {};
+
+  if (expiresIn) {
+    options.expiresIn = expiresIn as number;
+  }
+
+  const token = await jwt.sign(payload, secret, options);
   return token;
 };
 
-export default generateToken;
+const verifyToken = (token: string, secret: Secret) => {
+  const decoded = jwt.verify(token, secret) as JwtPayload;
+  return decoded;
+};
+
+export { generateToken, verifyToken };

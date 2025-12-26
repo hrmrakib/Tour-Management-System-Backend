@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import environment from "../config/env";
+import appConfig from "../config/env";
 import AppError from "../errorHelpers/AppError";
 
 const globalErrorHandler = (
@@ -23,7 +23,7 @@ const globalErrorHandler = (
     success: false,
     message: `Something has been wrong! ${error.message}`,
     error,
-    stack: environment.ENV_MODE === "development" ? error.stack : null,
+    stack: appConfig.ENV_MODE === "development" ? error.stack : null,
   });
 };
 

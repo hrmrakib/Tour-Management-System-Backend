@@ -2,17 +2,17 @@ import { Server } from "http";
 import mongoose from "mongoose";
 import app from "./app";
 import "dotenv/config";
-import environment from "./app/config/env";
+import appConfig from "./app/config/env";
 
 let server: Server;
 
 const startServer = async () => {
   try {
-    await mongoose.connect(environment.MONGODB_URI as string);
+    await mongoose.connect(appConfig.DATABASE_URI as string);
     console.log(`Connected to database!`);
 
-    server = app.listen(environment.PORT as string, () => {
-      console.log(`Server started at http://localhost:${environment.PORT}`);
+    server = app.listen(appConfig.PORT as string, () => {
+      console.log(`Server started at http://localhost:${appConfig.PORT}`);
     });
   } catch (error) {
     console.log(error);
