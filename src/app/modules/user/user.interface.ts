@@ -36,7 +36,7 @@ export interface IUser {
   isActive?: IsActive;
   isVarified?: boolean;
   role?: Role;
-  auths: IAuthProvider;
+  auths: IAuthProvider[];
   bookings?: Types.ObjectId[];
   guides?: Types.ObjectId[];
   createdAt?: Date;
