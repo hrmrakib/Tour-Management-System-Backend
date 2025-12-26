@@ -21,7 +21,7 @@ const globalErrorHandler = (
 
   res.status(500).json({
     success: false,
-    message: `Something has been wrong! ${error.message}`,
+    message: `${error.message}` || "Something has been wrong!",
     error,
     stack: appConfig.ENV_MODE === "development" ? error.stack : null,
   });

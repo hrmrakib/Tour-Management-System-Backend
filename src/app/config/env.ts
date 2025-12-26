@@ -17,6 +17,9 @@ interface EnvConfig {
 
   JWT_RESET_SECRET: string;
   JWT_RESET_EXPIRE_IN: string;
+
+  SUPER_ADMIN_EMAIL: string;
+  SUPER_ADMIN_PASSWORD: string;
 }
 
 const loadEnv = (): EnvConfig => {
@@ -33,6 +36,8 @@ const loadEnv = (): EnvConfig => {
     "JWT_REFRESH_EXPIRE_IN",
     "JWT_RESET_SECRET",
     "JWT_RESET_EXPIRE_IN",
+    "SUPER_ADMIN_EMAIL",
+    "SUPER_ADMIN_PASSWORD",
   ];
 
   requiredEnvVariables.forEach((envVariable) => {
@@ -58,6 +63,9 @@ const loadEnv = (): EnvConfig => {
 
     JWT_RESET_SECRET: process.env.JWT_RESET_SECRET!,
     JWT_RESET_EXPIRE_IN: process.env.JWT_RESET_EXPIRE_IN!,
+
+    SUPER_ADMIN_EMAIL: process.env.SUPER_ADMIN_EMAIL!,
+    SUPER_ADMIN_PASSWORD: process.env.SUPER_ADMIN_PASSWORD!,
   };
 };
 

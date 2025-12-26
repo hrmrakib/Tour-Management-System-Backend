@@ -3,6 +3,7 @@ import { userController } from "./user.controller";
 import { createUserZodSchema } from "./user.validation";
 import validateRequest from "../../middlewares/validateRequest";
 import checkAuth from "../../middlewares/checkAuth";
+import { Role } from "./user.interface";
 
 const router = Router();
 
@@ -14,7 +15,7 @@ router.post(
 
 router.get(
   "/all-users",
-  checkAuth("ADMIN", "SUPER_ADMIN"),
+  checkAuth(Role.SUPER_ADMIN, Role.ADMIN),
   userController.getAllUsers
 );
 

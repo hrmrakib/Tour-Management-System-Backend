@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import app from "./app";
 import "dotenv/config";
 import appConfig from "./app/config/env";
+import seedSuperAdmin from "./app/utils/seedSuperAdmin";
 
 let server: Server;
 
@@ -42,4 +43,7 @@ const startServer = async () => {
  * signal termination - ctrl + C (sigterm)
  */
 
-startServer();
+(async () => {
+  await startServer();
+  await seedSuperAdmin();
+})();
