@@ -51,21 +51,26 @@ const updateUser = async (
   }
 
   if (
-    isUserExist.isDeleted ||
-    isUserExist.isActive === IsActive.BLOCKED ||
-    isUserExist.isVarified
+    decodedToken.role !== Role.SUPER_ADMIN ||
+    decodedToken.role !== Role.ADMIN
   ) {
-    let message = "";
+    if (
+      isUserExist.isDeleted ||
+      isUserExist.isActive === IsActive.BLOCKED ||
+      !isUserExist.isVarified
+    ) {
+      let message = "";
 
-    if (isUserExist.isDeleted) {
-      message = "User account has been deleted.";
-    } else if (isUserExist.isActive === IsActive.BLOCKED) {
-      message = "User account is blocked. Please contact support.";
-    } else if (!isUserExist.isVarified) {
-      message = "User account is not verified. Please verify your account.";
+      if (isUserExist.isDeleted) {
+        message = "User account has been deleted.";
+      } else if (isUserExist.isActive === IsActive.BLOCKED) {
+        message = "User account is blocked. Please contact support.";
+      } else if (!isUserExist.isVarified) {
+        message = "User account is not verified. Please verify your account.";
+      }
+
+      throw new AppError(HSC.FORBIDDEN, message);
     }
-
-    throw new AppError(HSC.FORBIDDEN, message);
   }
 
   if (payload.role) {
@@ -110,5 +115,6 @@ const getAllUsers = async () => {
 
 export const UserServices = {
   createUser,
+  updateUser,
   getAllUsers,
 };

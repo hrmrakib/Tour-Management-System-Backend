@@ -15,10 +15,13 @@ const checkAuth =
         throw new AppError(HSC.UNAUTHORIZED, "You are not authorized!");
       }
 
+      
       const verifiedToken = verifyToken(
         accessToken,
         appConfig.JWT_ACCESS_SECRET
       ) as JwtPayload;
+
+      req.user = verifiedToken
 
       if (!verifiedToken) {
         throw new AppError(HSC.UNAUTHORIZED, "You are not authorized!");
