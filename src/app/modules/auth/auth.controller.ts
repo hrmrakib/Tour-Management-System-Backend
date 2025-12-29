@@ -3,22 +3,13 @@ import catchAsync from "../../utils/catchAsync";
 import HSC from "http-status-codes";
 import { authServices } from "./auth.service";
 import sendResponse from "../../utils/sendResponse";
+import { setAuthCookie } from "../../utils/setCookie";
 
 const credentialsLogin = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const loginInfo = await authServices.credentialsLogin(req.body);
 
-    res.cookie("refreshToken", loginInfo.refreshToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "none",
-    });
-
-    res.cookie("accessToken", loginInfo.accessToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "none",
-    });
+    setAuthCookie(res, loginInfo);
 
     sendResponse(res, {
       success: true,
@@ -39,16 +30,40 @@ const getNewAccessToken = catchAsync(
 
     const tokenInfo = await authServices.getNewAccessToken(refreshToken);
 
+    setAuthCookie(res, tokenInfo);
+
     sendResponse(res, {
       success: true,
       statusCode: HSC.OK,
-      message: "Get a new access token successfully",
+      message: "Get a new access token successful ly",
       data: tokenInfo,
     });
   }
 );
 
+const logout = catchAsync(async (req: Request, res: Response) => {
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
+
+  sendResponse(res, {
+    success: true,
+    statusCode: HSC.OK,
+    message: "User logged out successfully",
+    data: null,
+  });
+});
+
 export const authController = {
   credentialsLogin,
   getNewAccessToken,
+  logout,
 };

@@ -1,11 +1,8 @@
 import HSC from "http-status-codes";
-import { IsActive, IUser } from "../user/user.interface";
+import { IUser } from "../user/user.interface";
 import { User } from "../user/user.model";
 import AppError from "../../errorHelpers/AppError";
 import bcrypt from "bcryptjs";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import { generateToken, verifyToken } from "../../utils/jwt";
-import appConfig from "../../config/env";
 import {
   createNewAccessTokenWithRefreshToken,
   createUserToken,
