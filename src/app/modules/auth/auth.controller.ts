@@ -16,7 +16,21 @@ const credentialsLogin = catchAsync(
     });
   }
 );
+const getNewAccessToken = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const refreshToken = req.cookies.refreshToken;
+    const tokenInfo = await authServices.getNewAccessToken(refreshToken);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: HSC.OK,
+      message: "Get a new access token successfully",
+      data: tokenInfo,
+    });
+  }
+);
 
 export const authController = {
   credentialsLogin,
+  getNewAccessToken,
 };
