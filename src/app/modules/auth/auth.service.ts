@@ -6,7 +6,10 @@ import bcrypt from "bcryptjs";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { generateToken, verifyToken } from "../../utils/jwt";
 import appConfig from "../../config/env";
-import createUserToken from "../../utils/userToken";
+import {
+  createNewAccessTokenWithRefreshToken,
+  createUserToken,
+} from "../../utils/userToken";
 
 const credentialsLogin = async (payload: Partial<IUser>) => {
   const { email, password } = payload;
@@ -38,42 +41,11 @@ const credentialsLogin = async (payload: Partial<IUser>) => {
 };
 
 const getNewAccessToken = async (refreshToken: string) => {
-  const verifiedToken = verifyToken(
-    refreshToken,
-    appConfig.JWT_REFRESH_SECRET
-  ) as JwtPayload;
-
-  const isUserExist = await User.findOne({ email: verifiedToken.email });
-
-  if (!isUserExist) {
-    throw new AppError(HSC.NOT_FOUND, "User not found");
-  }
-
-  if (isUserExist.isDeleted) {
-    throw new AppError(HSC.FORBIDDEN, "User account has been deleted.");
-  } else if (
-    isUserExist.isActive === IsActive.BLOCKED ||
-    isUserExist.isActive === IsActive.INACTIVE
-  ) {
-    throw new AppError(
-      HSC.FORBIDDEN,
-      `User account is ${IsActive.INACTIVE.toLowerCase()}. Please contact support.`
-    );
-  }
-
-  const jwtPayload = {
-    email: verifiedToken.email,
-    id: verifiedToken._id,
-    role: verifiedToken.role,
-  };
-
-  const accessToken = await generateToken(
-    jwtPayload,
-    appConfig.JWT_ACCESS_SECRET,
-    appConfig.JWT_ACCESS_EXPIRE_IN as string | number
+  const newAccessToken = await createNewAccessTokenWithRefreshToken(
+    refreshToken
   );
 
-  return { accessToken };
+  return { accessToken: newAccessToken };
 };
 
 export const authServices = {

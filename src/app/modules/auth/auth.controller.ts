@@ -6,19 +6,37 @@ import sendResponse from "../../utils/sendResponse";
 
 const credentialsLogin = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const user = await authServices.credentialsLogin(req.body);
+    const loginInfo = await authServices.credentialsLogin(req.body);
+
+    res.cookie("refreshToken", loginInfo.refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "none",
+    });
+
+    res.cookie("accessToken", loginInfo.accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "none",
+    });
 
     sendResponse(res, {
       success: true,
       statusCode: HSC.OK,
       message: "User logged in successfully",
-      data: user,
+      data: loginInfo,
     });
   }
 );
+
 const getNewAccessToken = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+      throw new Error("Refresh expired. Please login first!");
+    }
+
     const tokenInfo = await authServices.getNewAccessToken(refreshToken);
 
     sendResponse(res, {
