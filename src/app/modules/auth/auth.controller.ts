@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import catchAsync from "../../utils/catchAsync";
 import HSC from "http-status-codes";
-import { authServices } from "./auth.service";
+import { AuthServices } from "./auth.service";
 import sendResponse from "../../utils/sendResponse";
 import { setAuthCookie } from "../../utils/setCookie";
 
 const credentialsLogin = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const loginInfo = await authServices.credentialsLogin(req.body);
+    const loginInfo = await AuthServices.credentialsLogin(req.body);
 
     setAuthCookie(res, loginInfo);
 
@@ -28,7 +28,7 @@ const getNewAccessToken = catchAsync(
       throw new Error("Refresh expired. Please login first!");
     }
 
-    const tokenInfo = await authServices.getNewAccessToken(refreshToken);
+    const tokenInfo = await AuthServices.getNewAccessToken(refreshToken);
 
     setAuthCookie(res, tokenInfo);
 
@@ -67,10 +67,10 @@ const resetPassword = catchAsync(async (req: Request, res: Response) => {
 
   const newPassword = req.body.newPassword;
 
-  const result = await authServices.resetPassword(decodedToken, newPassword);
+  const result = await AuthServices.resetPassword(decodedToken, newPassword);
 });
 
-export const authController = {
+export const AuthController = {
   credentialsLogin,
   getNewAccessToken,
   logout,

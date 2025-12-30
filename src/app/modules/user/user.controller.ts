@@ -3,8 +3,6 @@ import HSC from "http-status-codes";
 import { UserServices } from "./user.service";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
-import { verifyToken } from "../../utils/jwt";
-import appConfig from "../../config/env";
 import { JwtPayload } from "jsonwebtoken";
 
 const createUser = catchAsync(
@@ -54,7 +52,7 @@ const getAllUsers = async (req: Request, res: Response) => {
   });
 };
 
-export const userController = {
+export const UserController = {
   createUser,
   updateUser,
   getAllUsers,

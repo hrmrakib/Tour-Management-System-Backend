@@ -47,7 +47,7 @@ const getNewAccessToken = async (refreshToken: string) => {
 
 const resetPassword = async (req: Request, res: Response) => {};
 
-export const authServices = {
+export const AuthServices = {
   credentialsLogin,
   getNewAccessToken,
   resetPassword,
