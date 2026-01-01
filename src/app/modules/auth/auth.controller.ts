@@ -62,13 +62,26 @@ const logout = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const resetPassword = catchAsync(async (req: Request, res: Response) => {
-  const decodedToken = req.user as any;
+const resetPassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const newPassword = req.body.newPassword;
+    const oldPassword = req.body.oldPassword;
+    const decodedToken = req.user as any;
 
-  const newPassword = req.body.newPassword;
+    await AuthServices.resetPassword(
+      newPassword,
+      oldPassword,
+      decodedToken
+    );
 
-  const result = await AuthServices.resetPassword(decodedToken, newPassword);
-});
+    sendResponse(res, {
+    success: true,
+    statusCode: HSC.OK,
+    message: "Password resetted successfully",
+    data: null,
+  });
+  }
+);
 
 export const AuthController = {
   credentialsLogin,
