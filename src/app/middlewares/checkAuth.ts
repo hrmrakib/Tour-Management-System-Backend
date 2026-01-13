@@ -4,9 +4,11 @@ import { verifyToken } from "../utils/jwt";
 import HSC from "http-status-codes";
 import appConfig from "../config/env";
 import { JwtPayload } from "jsonwebtoken";
+import { User } from "../modules/user/user.model";
+import { IsActive } from "../modules/user/user.interface";
 
 const checkAuth =
-  (...roles: string[]) =>
+  (...authRoles: string[]) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const accessToken = req.headers.authorization;
@@ -15,19 +17,38 @@ const checkAuth =
         throw new AppError(HSC.UNAUTHORIZED, "You are not authorized!");
       }
 
-      
       const verifiedToken = verifyToken(
         accessToken,
         appConfig.JWT_ACCESS_SECRET
       ) as JwtPayload;
 
-      req.user = verifiedToken
+      const isUserExist = await User.findOne({
+        email: verifiedToken.email,
+      });
+
+      if (!isUserExist) {
+        throw new AppError(HSC.NOT_FOUND, "User not found");
+      }
+
+      if (isUserExist.isDeleted) {
+        throw new AppError(HSC.FORBIDDEN, "User account has been deleted.");
+      } else if (
+        isUserExist.isActive === IsActive.BLOCKED ||
+        isUserExist.isActive === IsActive.INACTIVE
+      ) {
+        throw new AppError(
+          HSC.FORBIDDEN,
+          `User account is ${IsActive.INACTIVE.toLowerCase()}. Please contact support.`
+        );
+      }
+
+      req.user = verifiedToken;
 
       if (!verifiedToken) {
         throw new AppError(HSC.UNAUTHORIZED, "You are not authorized!");
       }
 
-      if (!roles.includes(verifiedToken.role)) {
+      if (!authRoles.includes(verifiedToken.role)) {
         throw new AppError(HSC.UNAUTHORIZED, "You have no permission!");
       }
 

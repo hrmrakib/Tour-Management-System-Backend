@@ -66,8 +66,12 @@ const resetPassword = catchAsync(async (req: Request, res: Response) => {
   const decodedToken = req.user as any;
 
   const newPassword = req.body.newPassword;
+  const oldPassword = req.body.oldPassword;
 
-  const result = await AuthServices.resetPassword(decodedToken, newPassword);
+  const newUpdatedPassword = await AuthServices.resetPassword(
+    decodedToken,
+    newPassword
+  );
 });
 
 export const AuthController = {
