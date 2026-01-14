@@ -63,15 +63,22 @@ const logout = catchAsync(async (req: Request, res: Response) => {
 });
 
 const resetPassword = catchAsync(async (req: Request, res: Response) => {
-  const decodedToken = req.user as any;
-
   const newPassword = req.body.newPassword;
   const oldPassword = req.body.oldPassword;
+  const decodedToken = req.user;
 
-  const newUpdatedPassword = await AuthServices.resetPassword(
-    decodedToken,
-    newPassword
+  await AuthServices.resetPassword(
+    oldPassword,
+    newPassword,
+    decodedToken
   );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: HSC.OK,
+    message: "Password updated successfully",
+    data: null,
+  });
 });
 
 export const AuthController = {
