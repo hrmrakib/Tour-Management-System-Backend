@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 import { IAuthProvider, IsActive, IUser, Role } from "./user.interface";
 
 const authProviderSchema = new Schema<IAuthProvider>({
@@ -19,7 +19,7 @@ const userSchema = new Schema<IUser>(
     phone: { type: String },
     picture: { type: String },
     address: { type: String },
-    idDeleted: { type: Boolean, default: false },
+    isDeleted: { type: Boolean, default: false },
     isActive: {
       type: String,
       enum: Object.values(IsActive),
@@ -31,7 +31,7 @@ const userSchema = new Schema<IUser>(
   {
     timestamps: true,
     versionKey: false,
-  }
+  },
 );
 
 export const User = model<IUser>("User", userSchema);
