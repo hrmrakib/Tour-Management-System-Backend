@@ -115,7 +115,7 @@ const googleCallbackController = catchAsync(
 
     setAuthCookie(res, tokenInfo);
 
-    res.redirect(`${appConfig.GOOGLE_CALLBACK_URL}/auth/success`);
+    res.redirect(`${appConfig.GOOGLE_CALLBACK_URL}/success`);
   },
 );
 
