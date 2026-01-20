@@ -1,12 +1,12 @@
 import passport from "passport";
-import appConfig from "./env";
 import {
   Strategy as GoogleStrategy,
   Profile,
   VerifyCallback,
 } from "passport-google-oauth20";
-import { User } from "../modules/user/user.model";
 import { Role } from "../modules/user/user.interface";
+import { User } from "../modules/user/user.model";
+import appConfig from "./env";
 
 passport.use(
   new GoogleStrategy(
@@ -23,13 +23,12 @@ passport.use(
     ) => {
       try {
         const email = profile.emails?.[0].value;
+
         if (!email) {
-          return done(null, false, {
-            message: "No email found in Google profile",
-          });
+          return done(null, false, { mesaage: "No email found" });
         }
 
-        let user = User.findOne({ email }).exec();
+        let user = await User.findOne({ email });
 
         if (!user) {
           user = await User.create({
@@ -37,7 +36,7 @@ passport.use(
             name: profile.displayName,
             picture: profile.photos?.[0].value,
             role: Role.USER,
-            isVarified: true,
+            isVerified: true,
             auths: [
               {
                 provider: "google",
@@ -49,12 +48,18 @@ passport.use(
 
         return done(null, user);
       } catch (error) {
-        console.log(`Google strategy error`, error);
-        return done(error as Error);
+        console.log("Google Strategy Error", error);
+        return done(error);
       }
     },
   ),
 );
+
+// frontend localhost:5173/login?redirect=/booking -> localhost:5000/api/v1/auth/google?redirect=/booking -> passport -> Google OAuth Consent -> gmail login -> successful -> callback url localhost:5000/api/v1/auth/google/callback -> db store -> token
+
+// Bridge == Google -> user db store -> token
+//Custom -> email , password, role : USER, name... -> registration -> DB -> 1 User create
+//Google -> req -> google -> successful : Jwt Token : Role , email -> DB - Store -> token - api access
 
 passport.serializeUser((user: any, done: (err: any, id?: unknown) => void) => {
   done(null, user._id);

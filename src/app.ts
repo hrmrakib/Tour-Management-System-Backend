@@ -8,6 +8,7 @@ import notFound from "./app/middlewares/notFound";
 import cookieParser from "cookie-parser";
 import passport from "passport";
 import expressSession from "express-session";
+import "./app/config/passport";
 
 const app = express();
 
@@ -33,11 +34,11 @@ app.use(cors(corsOptions));
 
 app.use("/api/v1", baseRouter);
 
-app.get("/api/v1", (req: Request, res: Response) => {
+app.get("/", (req: Request, res: Response) => {
   res.status(200).json({
     success: true,
     statusCode: 200,
-    message: "Server is running! ",
+    message: "Server is running! 🚀",
     data: null,
   });
 });

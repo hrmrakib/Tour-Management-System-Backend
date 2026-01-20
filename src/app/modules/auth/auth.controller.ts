@@ -4,6 +4,11 @@ import HSC from "http-status-codes";
 import { AuthServices } from "./auth.service";
 import sendResponse from "../../utils/sendResponse";
 import { setAuthCookie } from "../../utils/setCookie";
+import appConfig from "../../config/env";
+import passport from "passport";
+import AppError from "../../errorHelpers/AppError";
+import { createUserToken } from "../../utils/userToken";
+import { JwtPayload } from "jsonwebtoken";
 
 const credentialsLogin = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -17,7 +22,7 @@ const credentialsLogin = catchAsync(
       message: "User logged in successfully",
       data: loginInfo,
     });
-  }
+  },
 );
 
 const getNewAccessToken = catchAsync(
@@ -38,7 +43,7 @@ const getNewAccessToken = catchAsync(
       message: "Get a new access token successful ly",
       data: tokenInfo,
     });
-  }
+  },
 );
 
 const logout = catchAsync(async (req: Request, res: Response) => {
@@ -70,7 +75,7 @@ const resetPassword = catchAsync(async (req: Request, res: Response) => {
   await AuthServices.resetPassword(
     oldPassword,
     newPassword,
-    decodedToken
+    decodedToken as JwtPayload,
   );
 
   sendResponse(res, {
@@ -81,9 +86,44 @@ const resetPassword = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// const googleLogin = catchAsync(async (req: Request, res: Response) => {
+//   const newPassword = req.body.newPassword;
+//   const oldPassword = req.body.oldPassword;
+//   const decodedToken = req.user;
+
+//   await AuthServices.resetPassword(oldPassword, newPassword, decodedToken!);
+
+//   sendResponse(res, {
+//     success: true,
+//     statusCode: HSC.OK,
+//     message: "Password updated successfully",
+//     data: null,
+//   });
+// });
+
+const googleCallbackController = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user;
+
+    console.log("user", user);
+
+    if (!user) {
+      throw new AppError(HSC.NOT_FOUND, "Google authentication failed");
+    }
+
+    const tokenInfo = await createUserToken(user);
+
+    setAuthCookie(res, tokenInfo);
+
+    res.redirect(`${appConfig.GOOGLE_CALLBACK_URL}/auth/success`);
+  },
+);
+
 export const AuthController = {
   credentialsLogin,
   getNewAccessToken,
   logout,
   resetPassword,
+  // googleLogin,
+  googleCallbackController,
 };
