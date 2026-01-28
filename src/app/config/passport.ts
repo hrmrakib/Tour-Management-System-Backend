@@ -29,7 +29,7 @@ passport.use(
           });
         }
 
-        let user = User.findOne({ email }).exec();
+        let user = await User.findOne({ email }).exec();
 
         if (!user) {
           user = await User.create({
