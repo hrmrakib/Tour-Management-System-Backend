@@ -34,7 +34,7 @@ export interface IUser {
   address?: string;
   isDeleted?: boolean;
   isActive?: IsActive;
-  isVarified?: boolean;
+  isVerified?: boolean;
   role?: Role;
   auths: IAuthProvider[];
   bookings?: Types.ObjectId[];
