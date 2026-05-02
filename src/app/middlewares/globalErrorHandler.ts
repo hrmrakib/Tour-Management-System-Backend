@@ -15,7 +15,7 @@ export const globalErrorHandler = (
   res: Response,
   next: NextFunction,
 ) => {
-  if (appConfig.ENV_MODE === "development") {
+  if (appConfig.MODE_ENV === "development") {
     console.log(err);
   }
 
@@ -58,7 +58,7 @@ export const globalErrorHandler = (
     success: false,
     message,
     errorSources,
-    err: appConfig.ENV_MODE === "development" ? err : null,
-    stack: appConfig.ENV_MODE === "development" ? err.stack : null,
+    err: appConfig.MODE_ENV === "development" ? err : null,
+    stack: appConfig.MODE_ENV === "development" ? err.stack : null,
   });
 };

@@ -4,7 +4,7 @@ dotenv.config();
 interface EnvConfig {
   PORT: string;
   DATABASE_URI: string;
-  ENV_MODE: "development" | "production";
+  MODE_ENV: "development" | "production";
   BCRYPT_SALT_ROUNDS: number;
   OTP_LENGTH: number;
   OTP_EXPIRE_IN: string;
@@ -34,7 +34,7 @@ const loadEnv = (): EnvConfig => {
   const requiredEnvVariables: string[] = [
     "PORT",
     "DATABASE_URI",
-    "ENV_MODE",
+    "MODE_ENV",
     "BCRYPT_SALT_ROUNDS",
     "OTP_LENGTH",
     "OTP_EXPIRE_IN",
@@ -62,7 +62,7 @@ const loadEnv = (): EnvConfig => {
   return {
     PORT: process.env.PORT as string,
     DATABASE_URI: process.env.DATABASE_URI as string,
-    ENV_MODE: process.env.ENV_MODE as "development" | "production",
+    MODE_ENV: process.env.MODE_ENV as "development" | "production",
 
     BCRYPT_SALT_ROUNDS: Number(process.env.BCRYPT_SALT_ROUNDS),
     OTP_LENGTH: Number(process.env.OTP_LENGTH),
@@ -83,7 +83,7 @@ const loadEnv = (): EnvConfig => {
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID!,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET!,
     GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL!,
-    
+
     EXPRESS_SESSION_SECRET: process.env.EXPRESS_SESSION_SECRET!,
     FRONTEND_URL: process.env.FRONTEND_URL!,
   };
