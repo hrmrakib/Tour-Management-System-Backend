@@ -5,8 +5,52 @@ import {
   Profile,
   VerifyCallback,
 } from "passport-google-oauth20";
+import { Strategy as LocalStratery } from "passport-local";
 import { User } from "../modules/user/user.model";
 import { Role } from "../modules/user/user.interface";
+import bcrypt from "bcryptjs";
+
+passport.use(
+  new LocalStratery(
+    {
+      usernameField: "email",
+      passwordField: "password",
+    },
+    async (email: string, password: string, done) => {
+      try {
+        const isUserExist = await User.findOne({ email });
+
+        if (!isUserExist) {
+          return done(null, false, { message: "User not found" });
+        }
+
+        const isGoogleAuthenticated = isUserExist.auths.some(
+          (auth) => auth.provider === "google",
+        );
+
+        if (isGoogleAuthenticated && !isUserExist.password) {
+          return done(null, false, {
+            message: "User already authenticated with Google",
+          });
+        }
+
+        const isPasswordMatched = await bcrypt.compare(
+          password,
+          isUserExist.password as string,
+        );
+
+        if (!isPasswordMatched) {
+          return done(null, false, { message: "Password not matched" });
+        }
+
+        return done(null, isUserExist);
+      } catch (error) {
+        console.log(`Local strategy error`, error);
+        return done(error);
+      }
+    },
+  ),
+);
 
 passport.use(
   new GoogleStrategy(
@@ -37,7 +81,7 @@ passport.use(
             name: profile.displayName,
             picture: profile.photos?.[0].value,
             role: Role.USER,
-            isVarified: true,
+            isVerified: true,
             auths: [
               {
                 provider: "google",

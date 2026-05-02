@@ -1,4 +1,4 @@
-import HSC from "http-status-codes";
+import httpStatus from "http-status-codes";
 import { IUser } from "../user/user.interface";
 import { User } from "../user/user.model";
 import AppError from "../../errorHelpers/AppError";
@@ -16,16 +16,16 @@ const credentialsLogin = async (payload: Partial<IUser>) => {
   const isUserExist = await User.findOne({ email });
 
   if (!isUserExist) {
-    throw new AppError(HSC.NOT_FOUND, "User not found");
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
   }
 
   const isPasswordMatched = await bcrypt.compare(
     password as string,
-    isUserExist.password as string
+    isUserExist.password as string,
   );
 
   if (!isPasswordMatched) {
-    throw new AppError(HSC.UNAUTHORIZED, "Invalid credentials");
+    throw new AppError(httpStatus.UNAUTHORIZED, "Invalid credentials");
   }
 
   const { accessToken, refreshToken } = await createUserToken(isUserExist);
@@ -40,9 +40,8 @@ const credentialsLogin = async (payload: Partial<IUser>) => {
 };
 
 const getNewAccessToken = async (refreshToken: string) => {
-  const newAccessToken = await createNewAccessTokenWithRefreshToken(
-    refreshToken
-  );
+  const newAccessToken =
+    await createNewAccessTokenWithRefreshToken(refreshToken);
 
   return { accessToken: newAccessToken };
 };
@@ -50,22 +49,22 @@ const getNewAccessToken = async (refreshToken: string) => {
 const resetPassword = async (
   oldPassword: string,
   newPassword: string,
-  decodedToken: JwtPayload
+  decodedToken: JwtPayload,
 ) => {
   const user = await User.findById(decodedToken.userId);
 
   const isOldPasswordMatched = await bcrypt.compare(
     oldPassword,
-    user?.password as string
+    user?.password as string,
   );
 
   if (!isOldPasswordMatched) {
-    throw new AppError(HSC.UNAUTHORIZED, "Old password is incorrect");
+    throw new AppError(httpStatus.UNAUTHORIZED, "Old password is incorrect");
   }
 
   const hashPassword = await bcrypt.hash(
     newPassword,
-    appConfig.BCRYPT_SALT_ROUNDS
+    appConfig.BCRYPT_SALT_ROUNDS,
   );
 
   user!.password = hashPassword;

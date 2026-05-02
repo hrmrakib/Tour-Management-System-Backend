@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import catchAsync from "../../utils/catchAsync";
-import HSC from "http-status-codes";
+import httpStatus from "http-status-codes";
 import { AuthServices } from "./auth.service";
 import sendResponse from "../../utils/sendResponse";
 import { setAuthCookie } from "../../utils/setCookie";
@@ -12,16 +12,35 @@ import { JwtPayload } from "jsonwebtoken";
 
 const credentialsLogin = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const loginInfo = await AuthServices.credentialsLogin(req.body);
+    // const loginInfo = await AuthServices.credentialsLogin(req.body);
 
-    setAuthCookie(res, loginInfo);
+    passport.authenticate("local", async (err: any, user: any, info: any) => {
+      if (err) {
+        // return next(err);
+        return next(new AppError(401, err.message));
+      }
 
-    sendResponse(res, {
-      success: true,
-      statusCode: HSC.OK,
-      message: "User logged in successfully",
-      data: loginInfo,
-    });
+      if (!user) {
+        return next(new AppError(401, info.message));
+      }
+
+      const loginInfo = await createUserToken(user);
+
+      const { password: userPasswod, ...rest } = user.toObject();
+
+      setAuthCookie(res, loginInfo);
+
+      sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "User logged in successfully",
+        data: {
+          accessToken: loginInfo.accessToken,
+          refreshToken: loginInfo.refreshToken,
+          user: rest,
+        },
+      });
+    })(req, res, next);
   },
 );
 
@@ -39,7 +58,7 @@ const getNewAccessToken = catchAsync(
 
     sendResponse(res, {
       success: true,
-      statusCode: HSC.OK,
+      statusCode: httpStatus.OK,
       message: "Get a new access token successful ly",
       data: tokenInfo,
     });
@@ -61,7 +80,7 @@ const logout = catchAsync(async (req: Request, res: Response) => {
 
   sendResponse(res, {
     success: true,
-    statusCode: HSC.OK,
+    statusCode: httpStatus.OK,
     message: "User logged out successfully",
     data: null,
   });
@@ -80,7 +99,7 @@ const resetPassword = catchAsync(async (req: Request, res: Response) => {
 
   sendResponse(res, {
     success: true,
-    statusCode: HSC.OK,
+    statusCode: httpStatus.OK,
     message: "Password updated successfully",
     data: null,
   });
@@ -95,7 +114,7 @@ const resetPassword = catchAsync(async (req: Request, res: Response) => {
 
 //   sendResponse(res, {
 //     success: true,
-//     statusCode: HSC.OK,
+//     statusCode: httpStatus.OK,
 //     message: "Password updated successfully",
 //     data: null,
 //   });
@@ -116,7 +135,7 @@ const googleCallbackController = catchAsync(
     console.log("user", user);
 
     if (!user) {
-      throw new AppError(HSC.NOT_FOUND, "Google authentication failed");
+      throw new AppError(httpStatus.NOT_FOUND, "Google authentication failed");
     }
 
     const tokenInfo = await createUserToken(user);

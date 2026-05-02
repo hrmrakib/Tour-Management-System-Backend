@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import AppError from "../../errorHelpers/AppError";
 import { IAuthProvider, IsActive, IUser, Role } from "./user.interface";
 import { User } from "./user.model";
-import HSC from "http-status-codes";
+import httpStatus from "http-status-codes";
 import { JwtPayload } from "jsonwebtoken";
 import appConfig from "../../config/env";
 
@@ -12,7 +12,7 @@ const createUser = async (payload: Partial<IUser>) => {
   const isUserExist = await User.findOne({ email });
 
   if (isUserExist) {
-    throw new AppError(HSC.CONFLICT, "User already exist");
+    throw new AppError(httpStatus.CONFLICT, "User already exist");
   }
   const hashPassword = await bcrypt.hash(password as string, 10);
 
@@ -34,7 +34,7 @@ const createUser = async (payload: Partial<IUser>) => {
 const updateUser = async (
   userId: string,
   payload: Partial<IUser>,
-  decodedToken: JwtPayload
+  decodedToken: JwtPayload,
 ) => {
   /**
    * email can't be updated
@@ -47,7 +47,7 @@ const updateUser = async (
   const isUserExist = await User.findById(userId);
 
   if (!isUserExist) {
-    throw new AppError(HSC.NOT_FOUND, "User not found");
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
   }
 
   if (
@@ -69,29 +69,29 @@ const updateUser = async (
         message = "User account is not verified. Please verify your account.";
       }
 
-      throw new AppError(HSC.FORBIDDEN, message);
+      throw new AppError(httpStatus.FORBIDDEN, message);
     }
   }
 
   if (payload.role) {
     if (decodedToken.role === Role.USER && payload.role === Role.GUIDE) {
-      throw new AppError(HSC.FORBIDDEN, "You are not authorized!");
+      throw new AppError(httpStatus.FORBIDDEN, "You are not authorized!");
     }
 
     if (payload.role === Role.SUPER_ADMIN && decodedToken.role !== Role.ADMIN) {
-      throw new AppError(HSC.FORBIDDEN, "You are not authorized!");
+      throw new AppError(httpStatus.FORBIDDEN, "You are not authorized!");
     }
 
     if (payload.isActive || payload.isDeleted || payload.isVarified) {
       if (decodedToken.role === Role.USER || decodedToken.role === Role.GUIDE) {
-        throw new AppError(HSC.FORBIDDEN, "You are not authorized!");
+        throw new AppError(httpStatus.FORBIDDEN, "You are not authorized!");
       }
     }
 
     if (payload.password) {
       payload.password = await bcrypt.hash(
         payload.password as string,
-        appConfig.BCRYPT_SALT_ROUNDS
+        appConfig.BCRYPT_SALT_ROUNDS,
       );
     }
 

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import HSC from "http-status-codes";
+import httpStatus from "http-status-codes";
 import { UserServices } from "./user.service";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
@@ -12,10 +12,10 @@ const createUser = catchAsync(
     sendResponse(res, {
       success: true,
       message: "User created successfully!",
-      statusCode: HSC.CREATED,
-      data: user
-    })
-  }
+      statusCode: httpStatus.CREATED,
+      data: user,
+    });
+  },
 );
 
 const updateUser = catchAsync(
@@ -23,7 +23,7 @@ const updateUser = catchAsync(
     const userId = req.params.id;
     // const token = req.headers.authorization;
     // const verifiedToken = verifyToken(token as string, appConfig.JWT_ACCESS_SECRET) as JwtPayload;
-     
+
     const verifiedToken = req.user as JwtPayload;
     const payload = req.body;
 
@@ -32,10 +32,10 @@ const updateUser = catchAsync(
     sendResponse(res, {
       success: true,
       message: "User updated successfully!",
-      statusCode: HSC.OK,
-      data: user
-    })
-  }
+      statusCode: httpStatus.OK,
+      data: user,
+    });
+  },
 );
 
 const getAllUsers = async (req: Request, res: Response) => {
@@ -43,7 +43,7 @@ const getAllUsers = async (req: Request, res: Response) => {
 
   sendResponse(res, {
     success: true,
-    statusCode: HSC.OK,
+    statusCode: httpStatus.OK,
     message: "Users retrieved successfully",
     meta: {
       total: result.meta.total,
