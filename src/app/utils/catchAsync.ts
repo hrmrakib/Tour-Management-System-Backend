@@ -10,7 +10,7 @@ type AsyncHandler = (
 const catchAsync =
   (fn: AsyncHandler) => (req: Request, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch((err: any) => {
-      // if (appConfig.MODE_ENV === "development") { // TODO: It handles from Global error handler
+      // if (appConfig.NODE_ENV === "development") { // TODO: It handles from Global error handler
       //   console.log(err);
       // }
       next(err);

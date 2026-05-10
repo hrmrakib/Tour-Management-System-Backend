@@ -4,7 +4,7 @@ dotenv.config();
 interface EnvConfig {
   PORT: string;
   DATABASE_URI: string;
-  MODE_ENV: "development" | "production";
+  NODE_ENV: "development" | "production";
   BCRYPT_SALT_ROUNDS: number;
   OTP_LENGTH: number;
   OTP_EXPIRE_IN: string;
@@ -34,7 +34,7 @@ const loadEnv = (): EnvConfig => {
   const requiredEnvVariables: string[] = [
     "PORT",
     "DATABASE_URI",
-    "MODE_ENV",
+    "NODE_ENV",
     "BCRYPT_SALT_ROUNDS",
     "OTP_LENGTH",
     "OTP_EXPIRE_IN",
@@ -62,7 +62,7 @@ const loadEnv = (): EnvConfig => {
   return {
     PORT: process.env.PORT as string,
     DATABASE_URI: process.env.DATABASE_URI as string,
-    MODE_ENV: process.env.MODE_ENV as "development" | "production",
+    NODE_ENV: process.env.NODE_ENV as "development" | "production",
 
     BCRYPT_SALT_ROUNDS: Number(process.env.BCRYPT_SALT_ROUNDS),
     OTP_LENGTH: Number(process.env.OTP_LENGTH),
