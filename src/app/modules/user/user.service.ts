@@ -104,7 +104,7 @@ const updateUser = async (
 };
 
 const getAllUsers = async () => {
-  const users = await User.find();
+  const users = await User.find().select("-password -auths");
   const total = await User.countDocuments();
 
   return {

@@ -15,7 +15,7 @@ const seedSuperAdmin = async () => {
 
   const hashPassword = await bcrypt.hash(
     appConfig.SUPER_ADMIN_PASSWORD,
-    appConfig.BCRYPT_SALT_ROUNDS
+    appConfig.BCRYPT_SALT_ROUNDS,
   );
 
   const authProvider: IAuthProvider = {
@@ -29,7 +29,7 @@ const seedSuperAdmin = async () => {
     password: hashPassword,
     role: Role.SUPER_ADMIN,
     isActive: IsActive.ACTIVE,
-    isVarified: true,
+    isVerified: true,
     auths: [authProvider],
   });
 
