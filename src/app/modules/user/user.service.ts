@@ -57,7 +57,7 @@ const updateUser = async (
     if (
       isUserExist.isDeleted ||
       isUserExist.isActive === IsActive.BLOCKED ||
-      !isUserExist.isVarified
+      !isUserExist.isVerified
     ) {
       let message = "";
 
@@ -65,7 +65,7 @@ const updateUser = async (
         message = "User account has been deleted.";
       } else if (isUserExist.isActive === IsActive.BLOCKED) {
         message = "User account is blocked. Please contact support.";
-      } else if (!isUserExist.isVarified) {
+      } else if (!isUserExist.isVerified) {
         message = "User account is not verified. Please verify your account.";
       }
 
@@ -82,7 +82,7 @@ const updateUser = async (
       throw new AppError(httpStatus.FORBIDDEN, "You are not authorized!");
     }
 
-    if (payload.isActive || payload.isDeleted || payload.isVarified) {
+    if (payload.isActive || payload.isDeleted || payload.isVerified) {
       if (decodedToken.role === Role.USER || decodedToken.role === Role.GUIDE) {
         throw new AppError(httpStatus.FORBIDDEN, "You are not authorized!");
       }

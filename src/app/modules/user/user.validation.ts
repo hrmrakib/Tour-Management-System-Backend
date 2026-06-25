@@ -1,51 +1,103 @@
-import Z from "zod";
+import { z as Z } from "zod";
 import { IsActive, Role } from "./user.interface";
 
 const phoneRegex = /^(?:\+8801|8801|01)[3-9]\d{8}$/;
 
 export const createUserZodSchema = Z.object({
-  name: Z.string("Name must be a string")
-    .min(3, "Name must be at least 3 characters long")
-    .max(50, "Name must be at most 50 characters long"),
-  email: Z.string("Email must be a string")
-    .email("Invalid email")
-    .min(3, "Email must be at least 3 characters long")
-    .max(50, "Email must be at most 50 characters long"),
-  password: Z.string("Password must be a string")
-    .min(6, "Password must be at least 6 characters long")
-    .max(40, "Password must be at most 40 characters long"),
-  phone: Z.string("Phone must be a string")
-    .regex(phoneRegex, "Invalid Bangladeshi phone number")
+  name: Z.string()
+    .min(3, { message: "Name must be at least 3 characters long" })
+    .max(50, { message: "Name must be at most 50 characters long" }),
+  email: Z.string()
+    .email({ message: "Invalid email" })
+    .min(3, { message: "Email must be at least 3 characters long" })
+    .max(50, { message: "Email must be at most 50 characters long" }),
+  password: Z.string()
+    .min(6, { message: "Password must be at least 6 characters long" })
+    .max(40, { message: "Password must be at most 40 characters long" }),
+  phone: Z.string()
+    .regex(phoneRegex, { message: "Invalid Bangladeshi phone number" })
     .optional(),
-  address: Z.string("Address must be a string")
-    .min(3, "Address must be at least 3 characters long")
-    .max(50, "Address must be at most 50 characters long")
+  address: Z.string()
+    .min(3, { message: "Address must be at least 3 characters long" })
+    .max(50, { message: "Address must be at most 50 characters long" })
     .optional(),
 });
 
 export const updateUserZodSchema = Z.object({
-  name: Z.string("Name must be a string")
-    .min(3, "Name must be at least 3 characters long")
-    .max(50, "Name must be at most 50 characters long")
+  name: Z.string()
+    .min(3, { message: "Name must be at least 3 characters long" })
+    .max(50, { message: "Name must be at most 50 characters long" })
     .optional(),
-  email: Z.string("Email must be a string")
-    .email("Invalid email")
-    .min(3, "Email must be at least 3 characters long")
-    .max(50, "Email must be at most 50 characters long")
+  email: Z.string()
+    .email({ message: "Invalid email" })
+    .min(3, { message: "Email must be at least 3 characters long" })
+    .max(50, { message: "Email must be at most 50 characters long" })
     .optional(),
-  password: Z.string("Password must be a string")
-    .min(6, "Password must be at least 6 characters long")
-    .max(40, "Password must be at most 40 characters long")
+  password: Z.string()
+    .min(6, { message: "Password must be at least 6 characters long" })
+    .max(40, { message: "Password must be at most 40 characters long" })
     .optional(),
-  phone: Z.string("Phone must be a string")
-    .regex(phoneRegex, "Invalid phone number")
+  phone: Z.string()
+    .regex(phoneRegex, { message: "Invalid Bangladeshi phone number" })
     .optional(),
-  address: Z.string("Address must be a string")
-    .min(3, "Address must be at least 3 characters long")
-    .max(50, "Address must be at most 50 characters long")
+  address: Z.string()
+    .min(3, { message: "Address must be at least 3 characters long" })
+    .max(50, { message: "Address must be at most 50 characters long" })
     .optional(),
-  role: Z.enum(Object.values(Role) as [string]).optional(),
-  IsActive: Z.enum(Object.values(IsActive) as [string]).optional(),
-  IsDeleted: Z.boolean("Is deleted must be true or false.").optional(),
-  IsVarified: Z.boolean("Is varified must be true or false.").optional(),
+  role: Z.nativeEnum(Role).optional(),
+  IsActive: Z.nativeEnum(IsActive).optional(),
+  IsDeleted: Z.boolean().optional(),
+  IsVarified: Z.boolean().optional(),
 });
+
+// import Z from "zod";
+// import { IsActive, Role } from "./user.interface";
+
+// const phoneRegex = /^(?:\+8801|8801|01)[3-9]\d{8}$/;
+
+// export const createUserZodSchema = Z.object({
+//   name: Z.string("Name must be a string")
+//     .min(3, "Name must be at least 3 characters long")
+//     .max(50, "Name must be at most 50 characters long"),
+//   email: Z.string("Email must be a string")
+//     .email("Invalid email")
+//     .min(3, "Email must be at least 3 characters long")
+//     .max(50, "Email must be at most 50 characters long"),
+//   password: Z.string("Password must be a string")
+//     .min(6, "Password must be at least 6 characters long")
+//     .max(40, "Password must be at most 40 characters long"),
+//   phone: Z.string("Phone must be a string")
+//     .regex(phoneRegex, "Invalid Bangladeshi phone number")
+//     .optional(),
+//   address: Z.string("Address must be a string")
+//     .min(3, "Address must be at least 3 characters long")
+//     .max(50, "Address must be at most 50 characters long")
+//     .optional(),
+// });
+
+// export const updateUserZodSchema = Z.object({
+//   name: Z.string("Name must be a string")
+//     .min(3, "Name must be at least 3 characters long")
+//     .max(50, "Name must be at most 50 characters long")
+//     .optional(),
+//   email: Z.string("Email must be a string")
+//     .email("Invalid email")
+//     .min(3, "Email must be at least 3 characters long")
+//     .max(50, "Email must be at most 50 characters long")
+//     .optional(),
+//   password: Z.string("Password must be a string")
+//     .min(6, "Password must be at least 6 characters long")
+//     .max(40, "Password must be at most 40 characters long")
+//     .optional(),
+//   phone: Z.string("Phone must be a string")
+//     .regex(phoneRegex, "Invalid phone number")
+//     .optional(),
+//   address: Z.string("Address must be a string")
+//     .min(3, "Address must be at least 3 characters long")
+//     .max(50, "Address must be at most 50 characters long")
+//     .optional(),
+//   role: Z.enum(Object.values(Role) as [string]).optional(),
+//   IsActive: Z.enum(Object.values(IsActive) as [string]).optional(),
+//   IsDeleted: Z.boolean("Is deleted must be true or false.").optional(),
+//   IsVarified: Z.boolean("Is varified must be true or false.").optional(),
+// });
