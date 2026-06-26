@@ -59,7 +59,7 @@ const getNewAccessToken = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      message: "Get a new access token successful ly",
+      message: "Get a new access token successfully",
       data: tokenInfo,
     });
   },
