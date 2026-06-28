@@ -51,7 +51,7 @@ const resetPassword = async (
   newPassword: string,
   decodedToken: JwtPayload,
 ) => {
-  const user = await User.findById(decodedToken.userId);
+  const user = await User.findById(decodedToken.id);
 
   const isOldPasswordMatched = await bcrypt.compare(
     oldPassword,

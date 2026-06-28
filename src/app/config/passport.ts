@@ -67,6 +67,7 @@ passport.use(
     ) => {
       try {
         const email = profile.emails?.[0].value;
+
         if (!email) {
           return done(null, false, {
             message: "No email found in Google profile",
