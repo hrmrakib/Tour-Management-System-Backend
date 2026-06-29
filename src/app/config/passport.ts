@@ -58,6 +58,7 @@ passport.use(
       clientID: appConfig.GOOGLE_CLIENT_ID,
       clientSecret: appConfig.GOOGLE_CLIENT_SECRET,
       callbackURL: appConfig.GOOGLE_CALLBACK_URL,
+      scope: ["profile", "email"],
     },
     async (
       accessToken: string,

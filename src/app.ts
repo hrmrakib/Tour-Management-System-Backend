@@ -13,6 +13,11 @@ import { globalErrorHandler } from "./app/middlewares/globalErrorHandler";
 
 const app = express();
 
+// middlewares
+app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use(
   expressSession({
     secret: "secret",
@@ -22,11 +27,6 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-
-// middlewares
-app.use(cookieParser());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 // Apply CORS middleware from separate config
 app.use(cors(corsOptions));

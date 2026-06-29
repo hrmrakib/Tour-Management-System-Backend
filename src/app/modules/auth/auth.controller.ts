@@ -132,7 +132,7 @@ const googleCallbackController = catchAsync(
 
     const user = req.user;
 
-    console.log("user", user);
+    console.log("user google", user);
 
     if (!user) {
       throw new AppError(httpStatus.NOT_FOUND, "Google authentication failed");
@@ -142,7 +142,7 @@ const googleCallbackController = catchAsync(
 
     setAuthCookie(res, tokenInfo);
 
-    res.redirect(`${appConfig.GOOGLE_CALLBACK_URL}/${redirectTo}`);
+    res.redirect(`${appConfig.FRONTEND_URL}/${redirectTo}`);
   },
 );
 
