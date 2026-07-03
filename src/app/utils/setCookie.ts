@@ -9,7 +9,8 @@ export const setAuthCookie = (res: Response, tokenInfo: IAuthToken) => {
   if (tokenInfo.accessToken) {
     res.cookie("accessToken", tokenInfo.accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
+      // secure: process.env.NODE_ENV === "production",
       sameSite: "none",
     });
   }
@@ -17,7 +18,8 @@ export const setAuthCookie = (res: Response, tokenInfo: IAuthToken) => {
   if (tokenInfo.refreshToken) {
     res.cookie("refreshToken", tokenInfo.refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
+      // secure: process.env.NODE_ENV === "production",
       sameSite: "none",
     });
   }
