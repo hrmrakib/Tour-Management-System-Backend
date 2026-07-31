@@ -23,7 +23,7 @@ export const globalErrorHandler = (
   let statusCode = 500;
   let message = "Something Went Wrong!!";
 
-  //Duplicate error
+  // Duplicate error
   if (err.code === 11000) {
     const simplifiedError = handlerDuplicateError(err);
     statusCode = simplifiedError.statusCode;
