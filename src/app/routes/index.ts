@@ -3,6 +3,7 @@ import UserRouter from "../modules/user/user.route";
 import AuthRouter from "../modules/auth/auth.route";
 import { TourRouter } from "../modules/tour/tour.route";
 import { DivisionRouter } from "../modules/division/division.route";
+import { BookingRouter } from "../modules/booking/booking.route";
 
 const baseRouter = Router();
 
@@ -22,6 +23,10 @@ const moduleRoutes = [
   {
     path: "/tour",
     route: TourRouter,
+  },
+  {
+    path: "/booking",
+    route: BookingRouter,
   },
 ];
 

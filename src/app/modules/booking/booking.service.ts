@@ -76,3 +76,24 @@ const createBooking = async (payload: Partial<IBooking>, userId: string) => {
     // const sslPayment = await SSLService()
   } catch (error) {}
 };
+
+const getUserBookings = async () => {
+  return {};
+};
+const getBookingById = async () => {
+  return {};
+};
+const getBookingStatus = async () => {
+  return {};
+};
+const getAllBookings = async () => {
+  return {};
+};
+
+export const BookingServices = {
+  createBooking,
+  getUserBookings,
+  getBookingById,
+  getBookingStatus,
+  getAllBookings,
+};

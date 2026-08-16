@@ -7,6 +7,7 @@ import { createTourTypeZodSchema } from "./tour.validation";
 
 const router = Router();
 
+//TODO: Tour Type
 router.post(
   "/create-tour-type",
   checkAuth(Role.SUPER_ADMIN, Role.ADMIN),
@@ -30,6 +31,8 @@ router.delete(
   checkAuth(Role.SUPER_ADMIN, Role.ADMIN),
   TourController.deleteTourType,
 );
+
+// TODO: Tour
 
 router.post(
   "/create-tour",
