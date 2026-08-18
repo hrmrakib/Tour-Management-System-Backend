@@ -7,19 +7,31 @@ import httpStatus from "http-status-codes";
 import { Tour } from "../tour/tour.model";
 import { Payment } from "../payment/payment.model";
 import { ISSLCommerz } from "../sslCommerz/sslCommerz.interface";
+import { PAYMENT_STATUS } from "../payment/payment.interface";
+import { SSLService } from "../sslCommerz/sslCommerz.service";
+
+/**
+ * Duplicate DB Collections / replica
+ *
+ * Relica DB -> [ Create Booking -> Create Payment ->  Update Booking -> Error] -> Real DB
+ */
 
 const createBooking = async (payload: Partial<IBooking>, userId: string) => {
   const transectionId = getTransactionId();
 
   const session = await Booking.startSession();
-
   session.startTransaction();
 
   try {
     const user = await User.findById(userId);
 
+    console.log({ user });
+
     if (!user?.phone || !user?.address) {
-      throw new AppError(httpStatus.NOT_FOUND, "Need to add address and phone");
+      throw new AppError(
+        httpStatus.NOT_FOUND,
+        "Need to add address and phone, update profile",
+      );
     }
 
     const tour = await Tour.findById(payload.tour).select("costFrom");
@@ -41,17 +53,20 @@ const createBooking = async (payload: Partial<IBooking>, userId: string) => {
       { session },
     );
 
-    const payment = await Payment.create([
-      {
-        booking: booking[0]._id,
-        status: BOOKING_STATUS.PENDING,
-        transactionId: transectionId,
-        amount,
-      },
-    ]);
+    const payment = await Payment.create(
+      [
+        {
+          booking: booking[0]._id,
+          status: PAYMENT_STATUS.UNPAID,
+          transactionId: transectionId,
+          amount,
+        },
+      ],
+      { session },
+    );
 
     const updatedBooking = await Booking.findOneAndUpdate(
-      booking[0]._id,
+      { _id: booking[0]._id },
       { payment: payment[0]._id },
       { new: true, runValidators: true, session },
     )
@@ -73,9 +88,26 @@ const createBooking = async (payload: Partial<IBooking>, userId: string) => {
       transactionId: transectionId,
     };
 
-    // const sslPayment = await SSLService()
-  } catch (error) {}
+    const sslPayment = await SSLService.sslPaymentInit(sslPayload);
+
+    await session.commitTransaction();
+    session.endSession();
+
+    // return updatedBooking;
+    return {
+      paymentUrl: sslPayment.GatewayPageURL,
+      booking: updatedBooking,
+    };
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
 };
+
+// Frontend(localhost:5173) - User - Tour - Booking (Pending) - Payment(Unpaid) -> SSLCommerz Page -> Payment Complete -> Backend(localhost:5000/api/v1/payment/success) -> Update Payment(PAID) & Booking(CONFIRM) -> redirect to frontend -> Frontend(localhost:5173/payment/success)
+
+// Frontend(localhost:5173) - User - Tour - Booking (Pending) - Payment(Unpaid) -> SSLCommerz Page -> Payment Fail / Cancel -> Backend(localhost:5000) -> Update Payment(FAIL / CANCEL) & Booking(FAIL / CANCEL) -> redirect to frontend -> Frontend(localhost:5173/payment/cancel or localhost:5173/payment/fail)
 
 const getUserBookings = async () => {
   return {};
